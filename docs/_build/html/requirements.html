@@ -1,0 +1,181 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Requirements &#8212; pam 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Some planning" href="plan.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="requirements">
+<h1>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="scenes">
+<h2>Scenes<a class="headerlink" href="#scenes" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Time flow is controlled through realtime clock, not frame</p></li>
+<li><p>Multiple scenes can be joined together to form a complete movie</p></li>
+<li><p>Every dynamic object in the scene should be actor</p></li>
+<li><p>Controlling the render sequence of the actors</p></li>
+</ol>
+</div>
+<div class="section" id="actors">
+<h2>Actors<a class="headerlink" href="#actors" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Should have enough information to decide how it should behave at any time
+given in the movie</p></li>
+</ol>
+</div>
+<div class="section" id="actions">
+<h2>Actions<a class="headerlink" href="#actions" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><dl class="simple">
+<dt>Basic Actions:</dt><dd><ol class="loweralpha simple">
+<li><p>Stop</p></li>
+<li><p>Move</p></li>
+<li><p>Rotate</p></li>
+<li><p>Animation</p></li>
+<li><p>Changing attributes: Eg color, size</p></li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Each action should has:</dt><dd><ol class="loweralpha simple">
+<li><p>Start time</p></li>
+<li><p>Duration</p></li>
+<li><p>Starting point (depends on action type)</p></li>
+<li><p>Ending point (depends on action type)</p></li>
+</ol>
+</dd>
+</dl>
+</li>
+</ol>
+</div>
+<div class="section" id="editor">
+<h2>Editor<a class="headerlink" href="#editor" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Able to start / pause the playing scene anytime</p></li>
+<li><p>Able to control the playing speed in between +/- 0.5x-4x</p></li>
+<li><p>Able to insert extra actors into the scene</p></li>
+<li><dl class="simple">
+<dt>Extra actors can:</dt><dd><ol class="loweralpha simple">
+<li><p>Having basic actions - see <a class="reference internal" href="#actions">Actions</a></p></li>
+<li><p>Follow another actor</p></li>
+</ol>
+</dd>
+</dl>
+</li>
+<li><p>Able to set keyframes in the movie</p></li>
+<li><p>Smallest time scale - 1/60s = 0.0167s</p></li>
+</ol>
+</div>
+<div class="section" id="movie">
+<h2>Movie<a class="headerlink" href="#movie" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Able to start / pause the playing scene anytime</p></li>
+<li><p>Able to control the playing speed in between +/- 0.5x-4x</p></li>
+<li><p>Able to automatically pause at keyframes</p></li>
+<li><p>Smallest time scale - 1/60s = 0.0167s</p></li>
+</ol>
+</div>
+<div class="section" id="output-from-editor">
+<h2>Output from editor<a class="headerlink" href="#output-from-editor" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Input and output can be modified independently</p></li>
+</ol>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">pam</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="plan.html">Some planning</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Requirements</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="plan.html" title="previous chapter">Some planning</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, bee5325.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/requirements.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
