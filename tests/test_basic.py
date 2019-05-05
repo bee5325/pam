@@ -1,7 +1,9 @@
 import pytest
 from pam.actor import Actor, Act
+from pam.scene import Scene
 
 
+# ---------------------------------- ACTOR ---------------------------------- #
 @pytest.fixture()
 def empty_actor():
     return Actor()
@@ -18,10 +20,11 @@ def normal_actor():
 
 @pytest.fixture()
 def busy_actor():
-    a = Actor()
-    empty_actor.add_action(Act.STOP, 2)
-    empty_actor.add_action(Act.MOVE, 2, (100, 100))
-    empty_actor.add_action(Act.ROTATE, 2, 90)
+    actor = Actor()
+    actor.add_action(Act.STOP, 2)
+    actor.add_action(Act.MOVE, 2, (100, 100))
+    actor.add_action(Act.ROTATE, 2, 90)
+    return actor
 
 
 def test_actor_init(empty_actor):
@@ -61,4 +64,47 @@ def test_actor_action_at(normal_actor):
 
 
 def test_actor_move(busy_actor):
+    # check if the configuration is correct
+    assert busy_actor.action_at(2).type == Act.MOVE
+    assert busy_actor.action_at(2).dest == (100, 100)
+
+    # check if position changes with time
+    assert busy_actor.position == (0, 0)
+
+
+# ---------------------------------- SCENE ---------------------------------- #
+@pytest.fixture()
+def basic_scene():
+    return Scene()
+
+
+def test_scene_running(basic_scene):
+    basic_scene.set_framerate(60)
+
+    assert basic_scene.time == 0
+    basic_scene.update()
+    assert basic_scene.time == 0.0167
+    basic_scene.update()
+    assert basic_scene.time == 0.0334
+    basic_scene.update()
+    assert basic_scene.time == 0.0501
+
+
+def test_scene_update_actor(basic_scene, busy_actor):
+    basic_scene.add_actor(busy_actor)
+    basic_scene.set_framerate(60)
+
+    assert busy_actor.time == 0
+    basic_scene.update()
+    assert busy_actor.time == 0.0167
+    basic_scene.update()
+    assert busy_actor.time == 0.0334
+    basic_scene.update()
+    assert busy_actor.time == 0.0501
+
+
+
+
+
+
 
