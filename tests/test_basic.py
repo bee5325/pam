@@ -1,5 +1,6 @@
 import pytest
-from pam.actor import Actor, Act
+from pam.actor import Actor
+from pam.action import ActMove, ActRotate, ActStop, Action
 from pam.scene import Scene
 
 
@@ -12,18 +13,18 @@ def empty_actor():
 @pytest.fixture()
 def normal_actor():
     a = Actor()
-    a.add_action(Act.MOVE, 1, (100, 100))
-    a.add_action(Act.ROTATE, 2, 90)
-    a.add_action(Act.MOVE, 0.5, (200, 200))
+    a.add_action(ActMove, 1, (100, 200))
+    a.add_action(ActRotate, 2, 90)
+    a.add_action(ActMove, 0.5, (200, 100))
     return a
 
 
 @pytest.fixture()
 def busy_actor():
     actor = Actor()
-    actor.add_action(Act.STOP, 2)
-    actor.add_action(Act.MOVE, 2, (100, 100))
-    actor.add_action(Act.ROTATE, 2, 90)
+    actor.add_action(ActStop, 2)
+    actor.add_action(ActMove, 2, (100, 200))
+    actor.add_action(ActRotate, 2, 90)
     return actor
 
 
@@ -32,44 +33,69 @@ def test_actor_init(empty_actor):
 
 
 def test_actor_add_action(empty_actor):
-    empty_actor.add_action(Act.STOP, 2)
-    empty_actor.add_action(Act.MOVE, 1, (100, 100))
-    empty_actor.add_action(Act.ROTATE, 1, 90)
+    empty_actor.add_action(ActStop, 2)
+    empty_actor.add_action(ActMove, 1, (100, 200))
+    empty_actor.add_action(ActRotate, 1, 90)
 
     assert empty_actor.actions_count() == 4
-    assert empty_actor.actions[0].type == Act.STOP
+    assert empty_actor.actions[0].type == "ActStop"
     assert empty_actor.actions[0].duration == 2
     assert empty_actor.actions[0].dest == ""
-    assert empty_actor.actions[1].type == Act.MOVE
+    assert empty_actor.actions[1].type == "ActMove"
     assert empty_actor.actions[1].duration == 1
-    assert empty_actor.actions[1].dest == (100, 100)
-    assert empty_actor.actions[2].type == Act.ROTATE
+    assert empty_actor.actions[1].dest == (100, 200)
+    assert empty_actor.actions[2].type == "ActRotate"
     assert empty_actor.actions[2].duration == 1
     assert empty_actor.actions[2].dest == 90
-    assert empty_actor.actions[3].type == Act.STOP
+    assert empty_actor.actions[3].type == "ActStop"
     assert empty_actor.actions[3].duration == 0
     assert empty_actor.actions[3].dest == ""
 
 
 def test_actor_action_at(normal_actor):
-    assert normal_actor.action_at(0).type == Act.MOVE
-    assert normal_actor.action_at(0.5).type == Act.MOVE
-    assert normal_actor.action_at(1).type == Act.ROTATE
-    assert normal_actor.action_at(1.5).type == Act.ROTATE
-    assert normal_actor.action_at(2).type == Act.ROTATE
-    assert normal_actor.action_at(2.5).type == Act.ROTATE
-    assert normal_actor.action_at(3).type == Act.MOVE
-    assert normal_actor.action_at(3.5).type == Act.STOP
-    assert normal_actor.action_at(4).type == Act.STOP
+    assert normal_actor.action_at(0).type == "ActMove"
+    assert normal_actor.action_at(0.5).type == "ActMove"
+    assert normal_actor.action_at(1).type == "ActRotate"
+    assert normal_actor.action_at(1.5).type == "ActRotate"
+    assert normal_actor.action_at(2).type == "ActRotate"
+    assert normal_actor.action_at(2.5).type == "ActRotate"
+    assert normal_actor.action_at(3).type == "ActMove"
+    assert normal_actor.action_at(3.5).type == "ActStop"
+    assert normal_actor.action_at(4).type == "ActStop"
 
 
-def test_actor_move(busy_actor):
-    # check if the configuration is correct
-    assert busy_actor.action_at(2).type == Act.MOVE
-    assert busy_actor.action_at(2).dest == (100, 100)
+def test_actor_move(empty_actor):
+
+    empty_actor.add_action(ActMove, 2, (100, 200))
 
     # check if position changes with time
-    assert busy_actor.position == (0, 0)
+    assert empty_actor.position == (0, 0)
+    empty_actor.update(0.0167)
+    assert empty_actor.position == (0.835, 1.67)
+    empty_actor.update(1)
+    assert empty_actor.position == (50, 100)
+    empty_actor.update(2)
+    assert empty_actor.action_at(2).type == "ActStop"
+    assert empty_actor.state_at(2)["position"] == (100, 200)
+    assert empty_actor.position == (100, 200)
+    empty_actor.update(3)
+    assert empty_actor.position == (100, 200)
+
+
+def test_actor_add_action_type(empty_actor):
+
+    class ActCustom(Action):
+
+        def state_after(self, time_passed):
+            return dict(self.start_state, custom_state=time_passed)
+
+    empty_actor.add_action(ActCustom, 2, 0)
+    assert empty_actor.action_at(0).type == "ActCustom"
+    assert empty_actor.state_at(0)["custom_state"] == 0
+    assert empty_actor.state_at(1)["custom_state"] == 1
+
+    assert empty_actor.action_at(3).type == "ActStop"
+    assert empty_actor.state_at(3)["custom_state"] == 2
 
 
 # ---------------------------------- SCENE ---------------------------------- #
@@ -101,10 +127,3 @@ def test_scene_update_actor(basic_scene, busy_actor):
     assert busy_actor.time == 0.0334
     basic_scene.update()
     assert busy_actor.time == 0.0501
-
-
-
-
-
-
-

@@ -3,7 +3,6 @@
 A movie can contain multiple scenes.
 """
 
-from decimal import Decimal, ROUND_HALF_UP
 from pygame.sprite import AbstractGroup
 
 
@@ -17,7 +16,7 @@ class Scene(AbstractGroup):
         self.timestep = round(1/self.framerate, 4)
 
     def set_framerate(self, fr):
-        self.framerate = fr
+        self.framerate = min(fr, 60)
         self.timestep = round(1/self.framerate, 4)
 
     def add_actor(self, actor):
