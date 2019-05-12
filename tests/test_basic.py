@@ -1,4 +1,7 @@
 import pytest
+
+from pygame import Rect
+
 from pam.actor import Actor
 from pam.action import ActMove, ActRotate, ActStop, Action
 from pam.scene import Scene
@@ -30,6 +33,19 @@ def busy_actor():
 
 def test_actor_init(empty_actor):
     assert empty_actor.actions_count() == 1
+    assert empty_actor.rect.topleft == (0, 0)
+    assert empty_actor.rect.width == 0
+    assert empty_actor.rect.height == 0
+
+
+def test_actor_change_size(empty_actor):
+    empty_actor.rect = (1, 2, 10, 20)
+    assert empty_actor.rect.left == 1
+    assert empty_actor.rect.top == 2
+    assert empty_actor.rect.width == 10
+    assert empty_actor.rect.height == 20
+    assert empty_actor.image.get_width() == 10
+    assert empty_actor.image.get_height() == 20
 
 
 def test_actor_add_action(empty_actor):
@@ -82,6 +98,11 @@ def test_actor_move(empty_actor):
     assert empty_actor.position == (100, 200)
 
 
+def test_actor_stop(empty_actor):
+
+    assert empty_actor.state_at(0) == empty_actor.state_at(100)
+    
+
 def test_actor_add_action_type(empty_actor):
 
     class ActCustom(Action):
@@ -101,7 +122,14 @@ def test_actor_add_action_type(empty_actor):
 # ---------------------------------- SCENE ---------------------------------- #
 @pytest.fixture()
 def basic_scene():
-    return Scene()
+    return Scene(600, 400)
+
+
+def test_scene_init():
+    new_scene = Scene(600, 400)
+    assert new_scene.width == 600
+    assert new_scene.height == 400
+    assert type(new_scene.screen).__name__ == "Surface"
 
 
 def test_scene_running(basic_scene):

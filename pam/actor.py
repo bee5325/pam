@@ -10,11 +10,25 @@ from pam.action import Actions
 
 class Actor(pygame.sprite.Sprite):
 
-    def __init__(self):
+    def __init__(self, width=0, height=0):
         super().__init__()
         self.actions = Actions()
         self.time = 0
         self.position = (0, 0)
+
+        self._rect = None
+        self.image = None
+        self.rect = (0, 0, width, height)
+
+    @property
+    def rect(self):
+        return self._rect
+
+    @rect.setter
+    def rect(self, r):
+        left, top, width, height = r
+        self._rect = pygame.Rect(left, top, width, height)
+        self.image = pygame.Surface((width, height))
 
     def add_action(self, action, duration=0, dest=""):
         self.actions.add_action(action, duration, dest)
@@ -35,3 +49,7 @@ class Actor(pygame.sprite.Sprite):
             setattr(self, attrib, state)
 
 
+class ActorGroup(pygame.sprite.AbstractGroup):
+    # For now just so that the client code do not need to dependent on pygame.
+    # In the future, see if extra functionalities is needed
+    pass
