@@ -14,11 +14,25 @@ class Actor(pygame.sprite.Sprite):
         super().__init__()
         self.actions = Actions()
         self.time = 0
-        self.position = (0, 0)
 
         self._rect = None
+        self._pos = (0, 0)
+        self._color = (255, 255, 255)
+        self._angle = 0
+
         self.image = None
         self.rect = (0, 0, width, height)
+        self.position = (0, 0)
+
+    @property
+    def position(self):
+        return self._pos
+
+    @position.setter
+    def position(self, pos):
+        self._pos = pos
+        self.rect.topleft = pos
+        self.actions.init_states({"position": pos})
 
     @property
     def rect(self):
@@ -27,14 +41,32 @@ class Actor(pygame.sprite.Sprite):
     @rect.setter
     def rect(self, r):
         left, top, width, height = r
+        self._pos = (left, top)
         self._rect = pygame.Rect(left, top, width, height)
         self.image = pygame.Surface((width, height))
+        self.image.fill(self.color)
 
-    def add_action(self, action, duration=0, dest=""):
+    @property
+    def color(self):
+        return self._color
+
+    @color.setter
+    def color(self, c):
+        self._color = c
+        self.image.fill(c)
+        self.actions.init_states({"color": c})
+
+    @property
+    def angle(self):
+        return self._angle
+
+    @angle.setter
+    def angle(self, a):
+        self._angle = a
+        self.actions.init_states({"angle": a})
+
+    def act(self, action, duration=0, dest=""):
         self.actions.add_action(action, duration, dest)
-
-    def actions_count(self):
-        return len(self.actions)
 
     def action_at(self, time):
         return self.actions.action_at(time)
