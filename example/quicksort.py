@@ -5,8 +5,8 @@ import random
 import sequence
 from pam import actor, scene, action
 
-S_SIZE = S_WID, S_HGT = 600, 400
-NUMB_COUNT = 100
+S_SIZE = S_WID, S_HGT = 1000, 400
+NUMB_COUNT = 20
 RUN_TIME = 0.1
 
 
@@ -95,7 +95,4 @@ if __name__ == '__main__':
     for n in num:
         n.act(action.ActColor, 1, (255, 255, 255))
 
-    while True:
-        my_scene.control()
-        my_scene.update()
-        my_scene.draw()
+    my_scene.run()

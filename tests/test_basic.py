@@ -157,7 +157,9 @@ def test_actor_add_action_type(empty_actor):
 # ---------------------------------- SCENE ---------------------------------- #
 @pytest.fixture()
 def basic_scene():
-    return Scene(600, 400)
+    s = Scene(600, 400)
+    s.running = True
+    return s
 
 
 def test_scene_init(basic_scene):
@@ -198,18 +200,41 @@ def test_scene_add_actorgroup(basic_scene):
 
 def test_scene_update_fr(basic_scene):
 
+    basic_scene.set_framerate(60)
     assert basic_scene.time == 0
+    basic_scene.running = True
     basic_scene.update()
-    assert basic_scene.time >= 0.016
+    assert basic_scene.time == 0.016
+    basic_scene.update()
+    assert basic_scene.time == 0.032
+    basic_scene.update()
+    assert basic_scene.time == 0.048
 
 
 def test_scene_update_actor(basic_scene, busy_actor):
     basic_scene.add_actors(busy_actor)
     basic_scene.set_framerate(60)
 
+    basic_scene.running = True
     assert busy_actor.time == 0
     basic_scene.update()
-    assert busy_actor.time >= 0.016
+    assert busy_actor.time == 0.016
+    basic_scene.update()
+    assert basic_scene.time == 0.032
+    basic_scene.update()
+    assert basic_scene.time == 0.048
+
+
+def test_scene_pause():
+
+    s = Scene(1, 2)
+    assert s.time == 0
+    s.running = False
+    s.update()
+    assert s.time == 0
+    s.running = True
+    s.update()
+    assert s.time == 0.016
 
 
 def test_scene_sync():
