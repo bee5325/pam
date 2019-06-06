@@ -1,0 +1,154 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>APIs &#8212; pam 0.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Requirements" href="requirements.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="apis">
+<h1>APIs<a class="headerlink" href="#apis" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pam.scene.Scene">
+<em class="property">class </em><code class="descclassname">pam.scene.</code><code class="descname">Scene</code><span class="sig-paren">(</span><em>width</em>, <em>height</em><span class="sig-paren">)</span><a class="headerlink" href="#pam.scene.Scene" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="pam.scene.Scene.add_actors">
+<code class="descname">add_actors</code><span class="sig-paren">(</span><em>actors</em>, <em>groupname='unnamed'</em><span class="sig-paren">)</span><a class="headerlink" href="#pam.scene.Scene.add_actors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adding actors to the scene</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>actors</strong> (<em>Actor</em>) – Single actor or iterable of actors to be added</p></li>
+<li><p><strong>groupname</strong> (<em>str</em><em>, </em><em>optional</em>) – groupname for the actors to be added.
+Default to “unnamed”</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pam.scene.Scene.control">
+<code class="descname">control</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pam.scene.Scene.control" title="Permalink to this definition">¶</a></dt>
+<dd><p>Entry point for where all controls should be done</p>
+<dl class="simple">
+<dt>The available basic controls are:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">q</dt>
+<dd class="field-odd"><p>Quit</p>
+</dd>
+<dt class="field-even">SPACE</dt>
+<dd class="field-even"><p>Pause</p>
+</dd>
+<dt class="field-odd">LEFT</dt>
+<dd class="field-odd"><p>Running backward</p>
+</dd>
+<dt class="field-even">RIGHT</dt>
+<dd class="field-even"><p>Running forward</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p>The function can be extended to provide more controls. Check
+<a class="reference external" href="https://www.pygame.org/docs/ref/event.html">pygame.event</a> for more info</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">pam</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="plan.html">Some planning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="requirements.html">Requirements</a></li>
+</ul>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">APIs</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="requirements.html" title="previous chapter">Requirements</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, bee5325.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/pam.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

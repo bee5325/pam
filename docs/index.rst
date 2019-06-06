@@ -14,9 +14,16 @@ Design
    plan
    requirements
 
+APIs
+----
+
+.. toctree::
+   :maxdepth: 2
+
+   pam
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`

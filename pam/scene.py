@@ -3,28 +3,36 @@
 A movie can contain multiple scenes.
 """
 
-import sys
+from enum import Enum
 from collections import defaultdict
 import pygame
 from pam.actor import ActorGroup
 from pam.action import ActStop
 
 
+class PlayDir(Enum):
+    """Enum for play direction, either forward or backward"""
+
+    FORWARD = 0
+    BACKWARD = 1
+
+
 class Scene():
 
     def __init__(self, width, height):
         super().__init__()
-        self.width = width
-        self.height = height
         self.screen = pygame.display.set_mode((width, height))
         self.groups = defaultdict(ActorGroup)
-        self.last_timer = 0
-        self.time = 0
-        self.framerate = 60
-        self.timestep = round(1/self.framerate, 4)
-        self.ended = False
+        self._last_timer = 0
+        self._time = 0
+        self._framerate = 60
+        self._timestep = round(1/self._framerate, 4)
+        self._ended = False
         self._running = False
+        self._direction = PlayDir.FORWARD
+
         self.running = False
+        self.framerate = 60
 
         pygame.init()  # TODO: find a better place to init pygame
 
@@ -40,21 +48,56 @@ class Scene():
     def running(self, run):
         self._running = run
         if run:
-            self.last_timer = pygame.time.get_ticks()
+            self._last_timer = pygame.time.get_ticks()
+
+    @property
+    def end_time(self):
+        return max((actor.actions.end_time for actor in self.actors),
+                   default=0)
+
+    @property
+    def framerate(self):
+        return self._framerate
+
+    @framerate.setter
+    def framerate(self, fr):
+        self._framerate = min(fr, 60)
+        self._timestep = round(1/self._framerate, 4)
 
     def control(self):
+        """Entry point for where all controls should be done
+
+        The available basic controls are:
+            :q: Quit
+            :SPACE: Pause
+            :LEFT: Running backward
+            :RIGHT: Running forward
+
+        The function can be extended to provide more controls. Check
+        pygame.event_ for more info
+
+        .. _pygame.event: https://www.pygame.org/docs/ref/event.html"""
+
         for event in pygame.event.get():
             if (event.type == pygame.QUIT or (event.type == pygame.KEYUP and
                                               event.key == pygame.K_q)):
-                self.ended = True
+                self._ended = True
             elif (event.type == pygame.KEYUP and event.key == pygame.K_SPACE):
                 self.running = not self.running
-
-    def set_framerate(self, fr):
-        self.framerate = min(fr, 60)
-        self.timestep = round(1/self.framerate, 4)
+            elif (event.type == pygame.KEYUP and event.key == pygame.K_LEFT):
+                self._direction = PlayDir.BACKWARD
+            elif (event.type == pygame.KEYUP and event.key == pygame.K_RIGHT):
+                self._direction = PlayDir.FORWARD
 
     def add_actors(self, actors, groupname="unnamed"):
+        """Adding actors to the scene
+
+        Args:
+            actors (Actor): Single actor or iterable of actors to be added
+            groupname (str, optional): groupname for the actors to be added.
+                Default to "unnamed"
+        """
+
         self.groups[groupname].add(actors)
 
     def add_actorgroup(self, group, groupname):
@@ -64,29 +107,33 @@ class Scene():
 
     def run(self):
         self.running = True
-        while not self.ended:
+        while not self._ended:
             self.control()
             if self.running:
                 self.update()
                 self.draw()
 
     def sync(self):
-        longest_time = max(actor.actions.end_time for actor in self.actors)
         for actor in self.actors:
-            if actor.actions.end_time < longest_time:
-                actor.act(ActStop, longest_time-actor.actions.end_time)
+            if actor.actions.end_time < self.end_time:
+                actor.act(ActStop, self.end_time-actor.actions.end_time)
 
     def update(self):
         if self.running:
             # control framerate
-            timediff = (pygame.time.get_ticks() - self.last_timer) / 1000
-            if timediff < self.timestep:
-                pygame.time.delay(int((self.timestep-timediff)*1000))
+            timediff = (pygame.time.get_ticks() - self._last_timer) / 1000
+            if timediff < self._timestep:
+                pygame.time.delay(int((self._timestep-timediff)*1000))
 
-            self.time += (pygame.time.get_ticks() - self.last_timer) / 1000
-            self.last_timer = pygame.time.get_ticks()
+            if self._direction == PlayDir.FORWARD:
+                self._time += (pygame.time.get_ticks()-self._last_timer) / 1000
+                self._time = min(self.end_time, self._time)
+            elif self._direction == PlayDir.BACKWARD:
+                self._time -= (pygame.time.get_ticks()-self._last_timer) / 1000
+                self._time = max(0, self._time)
             for group in self.groups.values():
-                group.update(self.time)
+                group.update(self._time)
+            self._last_timer = pygame.time.get_ticks()
 
     def draw(self):
         self.screen.fill(0)

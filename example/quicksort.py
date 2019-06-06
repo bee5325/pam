@@ -6,7 +6,7 @@ import sequence
 from pam import actor, scene, action
 
 S_SIZE = S_WID, S_HGT = 1000, 400
-NUMB_COUNT = 20
+NUMB_COUNT = 10
 RUN_TIME = 0.1
 
 

@@ -4,7 +4,7 @@ from pygame import Rect
 
 from pam.actor import Actor, ActorGroup
 from pam.action import ActMove, ActRotate, ActColor, ActStop, Action
-from pam.scene import Scene
+from pam.scene import Scene, PlayDir
 
 
 # ---------------------------------- ACTOR ---------------------------------- #
@@ -163,8 +163,7 @@ def basic_scene():
 
 
 def test_scene_init(basic_scene):
-    assert basic_scene.width == 600
-    assert basic_scene.height == 400
+    assert basic_scene.end_time == 0
     assert type(basic_scene.screen).__name__ == "Surface"
 
 
@@ -193,48 +192,73 @@ def test_scene_add_actorgroup(basic_scene):
     actorgroup.add(Actor(), Actor(), Actor())
     assert len(basic_scene.groups["mygroup1"]) == 6
 
-    # add actor in actor will affect the outer group as well
+    # add actor in group from scene will affect the outer group as well
     basic_scene.add_actors(Actor(), groupname="mygroup1")
     assert len(actorgroup) == 7
 
 
-def test_scene_update_fr(basic_scene):
+def test_scene_end_time(basic_scene):
+    a, b = Actor(), Actor()
+    a.act(ActMove, 2, (1, 1))
+    b.act(ActMove, 1, (2, 2))
 
-    basic_scene.set_framerate(60)
-    assert basic_scene.time == 0
+    basic_scene.add_actors([a, b])
+    assert basic_scene.end_time == 2
+
+    c, d = Actor(), Actor()
+    c.act(ActMove, 4, (1, 1))
+    c.act(ActMove, 3, (2, 2))
+    d.act(ActMove, 1, (2, 2))
+
+    actorgroup = ActorGroup()
+    actorgroup.add(c, d)
+    basic_scene.add_actorgroup(actorgroup, "mygroup1")
+    assert basic_scene.end_time == 7
+
+    c.act(ActMove, 2, (2, 2))
+    assert basic_scene.end_time == 9
+
+
+def test_scene_update_fr(basic_scene, normal_actor):
+
+    basic_scene.framerate = 60
+    basic_scene.add_actors(normal_actor)
+    assert basic_scene._time == 0
     basic_scene.running = True
     basic_scene.update()
-    assert basic_scene.time == 0.016
+    assert basic_scene._time == 0.016
     basic_scene.update()
-    assert basic_scene.time == 0.032
+    assert basic_scene._time == 0.032
     basic_scene.update()
-    assert basic_scene.time == 0.048
+    assert basic_scene._time == 0.048
 
 
 def test_scene_update_actor(basic_scene, busy_actor):
     basic_scene.add_actors(busy_actor)
-    basic_scene.set_framerate(60)
+    basic_scene.framerate = 60
 
     basic_scene.running = True
     assert busy_actor.time == 0
     basic_scene.update()
     assert busy_actor.time == 0.016
     basic_scene.update()
-    assert basic_scene.time == 0.032
+    assert busy_actor.time == 0.032
     basic_scene.update()
-    assert basic_scene.time == 0.048
+    assert busy_actor.time == 0.048
 
 
-def test_scene_pause():
+def test_scene_pause(normal_actor):
 
     s = Scene(1, 2)
-    assert s.time == 0
+    s.add_actors(normal_actor)
+
+    assert s._time == 0
     s.running = False
     s.update()
-    assert s.time == 0
+    assert s._time == 0
     s.running = True
     s.update()
-    assert s.time == 0.016
+    assert s._time == 0.016
 
 
 def test_scene_sync():
@@ -259,3 +283,21 @@ def test_scene_sync():
     assert a.actions.end_time == 4
     assert b.actions.end_time == 4
     assert c.actions.end_time == 4
+
+
+def test_scene_play_direction(normal_actor):
+    s = Scene(1, 1)
+    s.add_actors(normal_actor)
+    s.framerate = 60
+    s.running = True
+
+    s.update()
+    assert s._time == 0.016
+    s.update()
+    assert s._time == 0.032
+    s._direction = PlayDir.BACKWARD
+    s.update()
+    assert s._time == 0.016
+    s.update()
+    assert s._time == 0
+
