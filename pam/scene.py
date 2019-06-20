@@ -55,6 +55,27 @@ class Scene():
         return max((actor.actions.end_time for actor in self.actors),
                    default=0)
 
+    def add_actors(self, actors, groupname="unnamed"):
+        """Adding actors to the scene
+
+        Args:
+            actors (Actor): Single actor or iterable of actors to be added
+            groupname (str, optional): groupname for the actors to be added.
+                Default to "unnamed"
+        """
+
+        self.groups[groupname].add(actors)
+
+    def add_actorgroup(self, group, groupname):
+        if groupname in self.groups.keys():
+            raise ValueError("Group {} already exists!".format(group))
+        self.groups[groupname] = group
+
+    def sync(self):
+        for actor in self.actors:
+            if actor.actions.end_time < self.end_time:
+                actor.act(ActStop, self.end_time-actor.actions.end_time)
+
     @property
     def framerate(self):
         return self._framerate
@@ -89,22 +110,6 @@ class Scene():
             elif (event.type == pygame.KEYUP and event.key == pygame.K_RIGHT):
                 self._direction = PlayDir.FORWARD
 
-    def add_actors(self, actors, groupname="unnamed"):
-        """Adding actors to the scene
-
-        Args:
-            actors (Actor): Single actor or iterable of actors to be added
-            groupname (str, optional): groupname for the actors to be added.
-                Default to "unnamed"
-        """
-
-        self.groups[groupname].add(actors)
-
-    def add_actorgroup(self, group, groupname):
-        if groupname in self.groups.keys():
-            raise ValueError("Group {} already exists!".format(group))
-        self.groups[groupname] = group
-
     def run(self):
         self.running = True
         while not self._ended:
@@ -112,11 +117,6 @@ class Scene():
             if self.running:
                 self.update()
                 self.draw()
-
-    def sync(self):
-        for actor in self.actors:
-            if actor.actions.end_time < self.end_time:
-                actor.act(ActStop, self.end_time-actor.actions.end_time)
 
     def update(self):
         if self.running:
